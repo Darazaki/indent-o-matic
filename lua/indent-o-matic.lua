@@ -1,5 +1,5 @@
 -- Attempt to detect current buffer's indentation and apply it to local settings
-function indent_o_matic()
+function IndentOMatic()
     -- Get value of option
     local function opt(name)
         return vim.api.nvim_buf_get_option(0, name)
