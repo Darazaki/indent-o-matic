@@ -10,7 +10,7 @@ function IndentOMatic()
         return vim.api.nvim_buf_set_option(0, name, value)
     end
     
-    -- Get a line's contents as a string (1-indexed)
+    -- Get a line's contents as a string (0-indexed)
     local function line_at(index)
         return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
     end
@@ -21,7 +21,7 @@ function IndentOMatic()
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
-    local i = 1
+    local i = 0
     while true do
         local first_char
 
