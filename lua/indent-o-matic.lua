@@ -1,5 +1,5 @@
 -- Attempt to detect current buffer's indentation and apply it to local settings
-function indent_o_matic()
+function IndentOMatic()
     -- Get value of option
     local function opt(name)
         return vim.api.nvim_buf_get_option(0, name)
@@ -10,7 +10,7 @@ function indent_o_matic()
         return vim.api.nvim_buf_set_option(0, name, value)
     end
     
-    -- Get a line's contents as a string (1-indexed)
+    -- Get a line's contents as a string (0-indexed)
     local function line_at(index)
         return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
     end
@@ -21,7 +21,7 @@ function indent_o_matic()
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
-    local i = 1
+    local i = 0
     while true do
         local first_char
 
