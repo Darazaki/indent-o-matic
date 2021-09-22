@@ -1,5 +1,10 @@
 -- Attempt to detect current buffer's indentation and apply it to local settings
 function IndentOMatic()
+    -- Avoid crashes when accessing options if the user didn't configure the plugin
+    if indent_o_matic_config == nil then
+        indent_o_matic_config = {}
+    end
+
     -- Get value of option
     local function opt(name)
         return vim.api.nvim_buf_get_option(0, name)
@@ -15,14 +20,27 @@ function IndentOMatic()
         return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
     end
 
+    -- Get the configuration's value or its default if not set
+    local function config(config_key, default_value)
+        local value = indent_o_matic_config[config_key]
+        if value == nil then
+            value = default_value
+        end
+
+        return value
+    end
+
     -- Detect default indentation values (0 for tabs, N for N spaces)
     local default = opt('expandtab') and opt('shiftwidth') or 0
     local detected = default
 
+    -- Options
+    local max_lines = config('max_lines', 8192)
+
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
     local i = 0
-    while true do
+    while i ~= max_lines do
         local first_char
 
         local ok, line = pcall(function() return line_at(i) end)
