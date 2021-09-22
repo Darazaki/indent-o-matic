@@ -17,7 +17,7 @@ that most people will understand what it will do predictably
 
 ## Installation
 
-Can be installed though any standard Vim package manager, no additional configuration required
+Can be installed through any standard Vim package manager, no additional configuration required
 
 ## Alternatives
 
