@@ -17,7 +17,30 @@ that most people will understand what it will do predictably
 
 ## Installation
 
-Can be installed through any standard Vim package manager, no additional configuration required
+Can be installed through any standard Vim package manager, configuration is optional
+
+## Configuration
+
+Configuration is done in Lua:
+
+```lua
+indent_o_matic_config = {
+    -- The values indicated here are the defaults
+
+    -- Number of lines without indentation before giving up (use -1 for infinite)
+    max_lines = 8192
+}
+```
+
+You can also directly configure it from a Vim file by using the `lua` instruction:
+
+```vim
+lua <<EOF
+indent_o_matic_config = {
+    -- ...
+}
+EOF
+```
 
 ## Alternatives
 
