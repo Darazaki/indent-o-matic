@@ -1,4 +1,5 @@
 local indent_o_matic = {}
+local preferences = {}
 
 -- Get value of option
 local function opt(name)
@@ -17,7 +18,7 @@ end
 
 -- Get the configuration's value or its default if not set
 local function config(config_key, default_value)
-    local value = indent_o_matic_config[config_key]
+    local value = preferences[config_key]
     if value == nil then
         value = default_value
     end
@@ -25,13 +26,19 @@ local function config(config_key, default_value)
     return value
 end
 
+-- Configure the plugin
+function indent_o_matic.setup(options)
+    if type(option) == 'table' then
+        preferences = options
+    else
+        local msg = "Can't setup indent-o-matic, correct syntax is: "
+        msg = msg .. "require('indent-o-matic').setup { ... }"
+        error(msg)
+    end
+end
+
 -- Attempt to detect current buffer's indentation and apply it to local settings
 function indent_o_matic.detect()
-    -- Avoid crashes when accessing options if the user didn't configure the plugin
-    if indent_o_matic_config == nil then
-        indent_o_matic_config = {}
-    end
-
     -- Detect default indentation values (0 for tabs, N for N spaces)
     local default = opt('expandtab') and opt('shiftwidth') or 0
     local detected = default

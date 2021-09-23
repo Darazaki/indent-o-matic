@@ -24,7 +24,7 @@ Can be installed through any standard Vim package manager, configuration is opti
 Configuration is done in Lua:
 
 ```lua
-indent_o_matic_config = {
+require('indent-o-matic').setup {
     -- The values indicated here are the defaults
 
     -- Number of lines without indentation before giving up (use -1 for infinite)
@@ -36,7 +36,7 @@ You can also directly configure it from a Vim file by using the `lua` instructio
 
 ```vim
 lua <<EOF
-indent_o_matic_config = {
+require('indent-o-matic').setup {
     -- ...
 }
 EOF
