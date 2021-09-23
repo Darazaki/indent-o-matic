@@ -42,6 +42,9 @@ require('indent-o-matic').setup {
 EOF
 ```
 
+`:IndentOMatic` is also made available to detect the current buffer's indentation
+on demand
+
 ## Alternatives
 
 - [crazy8.nvim](https://github.com/zsugabubus/crazy8.nvim) by zsugabubus: Smarter algorithm
