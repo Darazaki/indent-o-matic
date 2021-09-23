@@ -17,7 +17,33 @@ that most people will understand what it will do predictably
 
 ## Installation
 
-Can be installed though any standard Vim package manager, no additional configuration required
+Can be installed through any standard Vim package manager, configuration is optional
+
+## Configuration
+
+Configuration is done in Lua:
+
+```lua
+require('indent-o-matic').setup {
+    -- The values indicated here are the defaults
+
+    -- Number of lines without indentation before giving up (use -1 for infinite)
+    max_lines = 2048
+}
+```
+
+You can also directly configure it from a Vim file by using the `lua` instruction:
+
+```vim
+lua <<EOF
+require('indent-o-matic').setup {
+    -- ...
+}
+EOF
+```
+
+`:IndentOMatic` is also made available to detect the current buffer's indentation
+on demand
 
 ## Alternatives
 

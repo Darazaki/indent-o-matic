@@ -1,28 +1,55 @@
+local indent_o_matic = {}
+local preferences = {}
+
+-- Get value of option
+local function opt(name)
+    return vim.api.nvim_buf_get_option(0, name)
+end
+
+-- Set value of option
+local function setopt(name, value)
+    return vim.api.nvim_buf_set_option(0, name, value)
+end
+
+-- Get a line's contents as a string (0-indexed)
+local function line_at(index)
+    return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
+end
+
+-- Get the configuration's value or its default if not set
+local function config(config_key, default_value)
+    local value = preferences[config_key]
+    if value == nil then
+        value = default_value
+    end
+
+    return value
+end
+
+-- Configure the plugin
+function indent_o_matic.setup(options)
+    if type(options) == 'table' then
+        preferences = options
+    else
+        local msg = "Can't setup indent-o-matic, correct syntax is: "
+        msg = msg .. "require('indent-o-matic').setup { ... }"
+        error(msg)
+    end
+end
+
 -- Attempt to detect current buffer's indentation and apply it to local settings
-function IndentOMatic()
-    -- Get value of option
-    local function opt(name)
-        return vim.api.nvim_buf_get_option(0, name)
-    end
-
-    -- Set value of option
-    local function setopt(name, value)
-        return vim.api.nvim_buf_set_option(0, name, value)
-    end
-    
-    -- Get a line's contents as a string (0-indexed)
-    local function line_at(index)
-        return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
-    end
-
+function indent_o_matic.detect()
     -- Detect default indentation values (0 for tabs, N for N spaces)
     local default = opt('expandtab') and opt('shiftwidth') or 0
     local detected = default
 
+    -- Options
+    local max_lines = config('max_lines', 2048)
+
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
     local i = 0
-    while true do
+    while i ~= max_lines do
         local first_char
 
         local ok, line = pcall(function() return line_at(i) end)
@@ -82,3 +109,5 @@ function IndentOMatic()
         end
     end
 end
+
+return indent_o_matic
