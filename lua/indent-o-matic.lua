@@ -28,7 +28,7 @@ end
 
 -- Configure the plugin
 function indent_o_matic.setup(options)
-    if type(option) == 'table' then
+    if type(options) == 'table' then
         preferences = options
     else
         local msg = "Can't setup indent-o-matic, correct syntax is: "
