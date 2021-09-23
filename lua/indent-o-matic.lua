@@ -1,33 +1,33 @@
+-- Get value of option
+local function opt(name)
+    return vim.api.nvim_buf_get_option(0, name)
+end
+
+-- Set value of option
+local function setopt(name, value)
+    return vim.api.nvim_buf_set_option(0, name, value)
+end
+
+-- Get a line's contents as a string (0-indexed)
+local function line_at(index)
+    return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
+end
+
+-- Get the configuration's value or its default if not set
+local function config(config_key, default_value)
+    local value = indent_o_matic_config[config_key]
+    if value == nil then
+        value = default_value
+    end
+
+    return value
+end
+
 -- Attempt to detect current buffer's indentation and apply it to local settings
 function IndentOMatic()
     -- Avoid crashes when accessing options if the user didn't configure the plugin
     if indent_o_matic_config == nil then
         indent_o_matic_config = {}
-    end
-
-    -- Get value of option
-    local function opt(name)
-        return vim.api.nvim_buf_get_option(0, name)
-    end
-
-    -- Set value of option
-    local function setopt(name, value)
-        return vim.api.nvim_buf_set_option(0, name, value)
-    end
-    
-    -- Get a line's contents as a string (0-indexed)
-    local function line_at(index)
-        return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
-    end
-
-    -- Get the configuration's value or its default if not set
-    local function config(config_key, default_value)
-        local value = indent_o_matic_config[config_key]
-        if value == nil then
-            value = default_value
-        end
-
-        return value
     end
 
     -- Detect default indentation values (0 for tabs, N for N spaces)
