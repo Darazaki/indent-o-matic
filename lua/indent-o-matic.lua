@@ -35,7 +35,7 @@ function IndentOMatic()
     local detected = default
 
     -- Options
-    local max_lines = config('max_lines', 8192)
+    local max_lines = config('max_lines', 2048)
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file

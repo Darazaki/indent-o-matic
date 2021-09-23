@@ -28,7 +28,7 @@ indent_o_matic_config = {
     -- The values indicated here are the defaults
 
     -- Number of lines without indentation before giving up (use -1 for infinite)
-    max_lines = 8192
+    max_lines = 2048
 }
 ```
 
