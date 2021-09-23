@@ -1,8 +1,8 @@
-lua require 'indent-o-matic'
+command IndentOMatic execute "lua require('indent_o_matic').detect()"
 
 augroup indent_o_matic
     au!
-    au BufReadPost * lua IndentOMatic()
+    au BufReadPost * IndentOMatic
     " Run once when saving for new files
-    au BufNew * au BufWritePost <buffer=abuf> ++once lua IndentOMatic()
+    au BufNew * au BufWritePost <buffer=abuf> ++once IndentOMatic
 augroup END

@@ -1,3 +1,5 @@
+local indent_o_matic = {}
+
 -- Get value of option
 local function opt(name)
     return vim.api.nvim_buf_get_option(0, name)
@@ -24,7 +26,7 @@ local function config(config_key, default_value)
 end
 
 -- Attempt to detect current buffer's indentation and apply it to local settings
-function IndentOMatic()
+function indent_o_matic.detect()
     -- Avoid crashes when accessing options if the user didn't configure the plugin
     if indent_o_matic_config == nil then
         indent_o_matic_config = {}
@@ -100,3 +102,5 @@ function IndentOMatic()
         end
     end
 end
+
+return indent_o_matic
