@@ -89,8 +89,7 @@ function indent_o_matic.detect()
                 local c = line:sub(j, j)
                 if c == '\t' then
                     -- Spaces and then a tab? WTF? Ignore this unholy line
-                    j = 0
-                    break
+                    goto continue
                 elseif c ~= ' ' then
                     break
                 end
