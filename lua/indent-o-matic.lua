@@ -97,8 +97,7 @@ function indent_o_matic.detect()
                 j = j + 1
             end
 
-            -- If it's a standard number of spaces (2, 4 or 8) it's probably the file's
-            -- indentation
+            -- If it's a standard number of spaces it's probably the file's indentation
             j = j - 1
             if contains(standard_widths, j) then
                 detected = j
