@@ -102,7 +102,7 @@ function indent_o_matic.detect()
             -- indentation
             j = j - 1
             if contains(standard_widths, j) then
-                detected = j - 1
+                detected = j
                 break
             end
         end
