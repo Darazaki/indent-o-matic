@@ -16,6 +16,18 @@ local function line_at(index)
     return vim.api.nvim_buf_get_lines(0, index, index + 1, true)[1]
 end
 
+-- Search if a list has a specific value
+-- This should be faster than a binary search for small lists
+local function contains(list, value)
+    for _, v in ipairs(list) do
+        if value == v then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- Get the configuration's value or its default if not set
 local function config(config_key, default_value)
     local value = preferences[config_key]
@@ -45,6 +57,7 @@ function indent_o_matic.detect()
 
     -- Options
     local max_lines = config('max_lines', 2048)
+    local standard_widths = config('standard_widths', { 2, 4, 8 })
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
@@ -76,8 +89,7 @@ function indent_o_matic.detect()
                 local c = line:sub(j, j)
                 if c == '\t' then
                     -- Spaces and then a tab? WTF? Ignore this unholy line
-                    j = 0
-                    break
+                    goto continue
                 elseif c ~= ' ' then
                     break
                 end
@@ -85,10 +97,10 @@ function indent_o_matic.detect()
                 j = j + 1
             end
 
-            -- If it's a standard number of spaces (2, 4 or 8) it's probably the file's
-            -- indentation
-            if j == 3 or j == 5 or j == 9 then
-                detected = j - 1
+            -- If it's a standard number of spaces it's probably the file's indentation
+            j = j - 1
+            if contains(standard_widths, j) then
+                detected = j
                 break
             end
         end
