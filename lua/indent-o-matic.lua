@@ -30,6 +30,16 @@ end
 
 -- Get the configuration's value or its default if not set
 local function config(config_key, default_value)
+    -- Attempt to get filetype specific config if available
+    local ft_preferences = preferences['filetype_' .. opt('filetype')]
+    if type(ft_preferences) == 'table' then
+        local value = ft_preferences[config_key]
+        if value ~= nil then
+            return value
+        end
+    end
+
+    -- No filetype specific config, try the global one or fallback to default
     local value = preferences[config_key]
     if value == nil then
         value = default_value
