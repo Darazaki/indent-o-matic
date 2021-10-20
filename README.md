@@ -45,7 +45,7 @@ require('indent-o-matic').setup {
 EOF
 ```
 
-Optionally you can define language-specific settings:
+Optionally you can define language-specific settings using the `filetype_$ft` tables:
 
 ```lua
 require('indent-o-matic').setup {
