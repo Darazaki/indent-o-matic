@@ -48,6 +48,16 @@ local function config(config_key, default_value)
     return value
 end
 
+-- Detect default indentation values (0 for tabs, N for N spaces)
+local function get_default_indent()
+    if opt('expandtab') then
+        -- If shiftwidth is 0, use tabstop (see: `:help shiftwidth`)
+        return opt('shiftwidth') or opt('tabstop')
+    else
+        return 0
+    end
+end
+
 -- Configure the plugin
 function indent_o_matic.setup(options)
     if type(options) == 'table' then
@@ -61,8 +71,7 @@ end
 
 -- Attempt to detect current buffer's indentation and apply it to local settings
 function indent_o_matic.detect()
-    -- Detect default indentation values (0 for tabs, N for N spaces)
-    local default = opt('expandtab') and opt('shiftwidth') or 0
+    local default = get_default_indent()
     local detected = default
 
     -- Options
