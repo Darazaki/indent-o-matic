@@ -52,7 +52,11 @@ end
 local function get_default_indent()
     if opt('expandtab') then
         -- If shiftwidth is 0, use tabstop (see: `:help shiftwidth`)
-        return opt('shiftwidth') or opt('tabstop')
+        local ident = opt('shiftwidth')
+        if ident == 0 then
+            ident = opt('tabstop')
+        end
+        return ident
     else
         return 0
     end
