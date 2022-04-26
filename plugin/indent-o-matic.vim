@@ -1,4 +1,4 @@
-command IndentOMatic execute "lua require('indent-o-matic').detect()"
+command! IndentOMatic execute "lua require('indent-o-matic').detect()"
 
 augroup indent_o_matic
     au!
