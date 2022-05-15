@@ -78,7 +78,7 @@ on demand
 
 ## Alternatives
 
-- [guess-indent.nvim](https://github.com/NMAC427/guess-indent.nvim) by Nicolas Camenisch: Smarter algorithm, configuration similar to indent-o-matic
+- [guess-indent.nvim](https://github.com/NMAC427/guess-indent.nvim) by Nicolas Camenisch: Smarter algorithm, configuration similar to indent-o-matic (see [explanations/benchmarks](https://github.com/Darazaki/indent-o-matic/issues/12))
 - [crazy8.nvim](https://github.com/zsugabubus/crazy8.nvim) by zsugabubus: Smarter algorithm
 - [DetectIndent](https://github.com/ciaranm/detectindent) by Ciaran McCreesh: Manually ran, smarter algorithm, Vim compatible
 - [vim-sleuth](https://github.com/tpope/vim-sleuth) by Tim Pope: Even smarter, Vim compatible
