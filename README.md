@@ -71,13 +71,14 @@ require('indent-o-matic').setup {
 ```
 
 If a preference hasn't been set in the language-specific settings, it'll be retrieved
-from the global settings.
+from the global settings
 
 `:IndentOMatic` is also made available to detect the current buffer's indentation
 on demand
 
 ## Alternatives
 
+- [guess-indent.nvim](https://github.com/NMAC427/guess-indent.nvim) by Nicolas Camenisch: Smarter algorithm, configuration similar to indent-o-matic
 - [crazy8.nvim](https://github.com/zsugabubus/crazy8.nvim) by zsugabubus: Smarter algorithm
 - [DetectIndent](https://github.com/ciaranm/detectindent) by Ciaran McCreesh: Manually ran, smarter algorithm, Vim compatible
 - [vim-sleuth](https://github.com/tpope/vim-sleuth) by Tim Pope: Even smarter, Vim compatible
