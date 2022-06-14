@@ -108,15 +108,15 @@ function indent_o_matic.detect()
             goto continue
         end
 
-        -- Skip multi-line comments and strings (1-indexed)
-        if skip_multiline and is_multiline(i + 1) then
-            goto continue
-        end
-
         -- If a line starts with a tab then the file must be tab indented
         -- else if it starts with spaces it tries to detect if it's the file's indentation
         first_char = line:sub(1, 1)
         if first_char == '\t' then
+            -- Skip multi-line comments and strings (1-indexed)
+            if skip_multiline and is_multiline(i + 1) then
+                goto continue
+            end
+
             detected = 0
             break
         elseif first_char == ' ' then
@@ -137,6 +137,11 @@ function indent_o_matic.detect()
             -- If it's a standard number of spaces it's probably the file's indentation
             j = j - 1
             if contains(standard_widths, j) then
+                -- Skip multi-line comments and strings (1-indexed)
+                if skip_multiline and is_multiline(i + 1) then
+                    goto continue
+                end
+
                 detected = j
                 break
             end
