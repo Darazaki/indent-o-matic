@@ -63,7 +63,7 @@ local function get_default_indent()
 end
 
 -- Detect if the line is a comment or a string
-local function should_be_skipped(line_number)
+local function is_multiline(line_number)
     -- Originally taken from leisiji's code:
     -- https://github.com/leisiji/indent-o-matic/blob/c440898e3e6bcc12c9c24d4867875712c4d1b5f7/lua/indent-o-matic.lua#L51-L57
     local syntax = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.synID(line_number, 1, 1)), 'name')
@@ -89,6 +89,7 @@ function indent_o_matic.detect()
     -- Options
     local max_lines = config('max_lines', 2048)
     local standard_widths = config('standard_widths', { 2, 4, 8 })
+    local skip_multiline = config('skip_multiline', true)
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
@@ -108,7 +109,7 @@ function indent_o_matic.detect()
         end
 
         -- Skip multi-line comments and strings (1-indexed)
-        if should_be_skipped(i + 1) then
+        if skip_multiline and is_multiline(i + 1) then
             goto continue
         end
 
