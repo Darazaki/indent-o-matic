@@ -1,17 +1,21 @@
 local indent_o_matic = {}
 local preferences = {}
 
--- Treesitter includes
-local parsers
-local highlighter = require 'vim.treesitter.highlighter'
-local has_ts_utils, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
-if has_ts_utils then
-    parsers = require 'nvim-treesitter.parsers'
-else
-    ts_utils = nil
+-- Optionally require a module returning `nil` if it can't be found
+local function optional_require(module)
+    local has_module, module = pcall(require, module)
+    if not has_module then
+        module = nil
+    end
+
+    return module
 end
 
-has_ts_utils = nil
+-- Tree-sitter includes
+local parsers = optional_require 'nvim-treesitter.parsers'
+local highlighter = optional_require 'vim.treesitter.highlighter'
+local ts_utils = optional_require 'nvim-treesitter.ts_utils'
+local ts_enabled = parsers ~= nil and highlighter ~= nil and ts_utils ~= nil
 
 -- Get value of option
 local function opt(name)
@@ -74,7 +78,7 @@ local function get_default_indent()
     end
 end
 
--- `is_multiline` variant based on Vim's syntax module
+-- Detect if the line is a comment or a string based on Vim's syntax module
 local function is_multiline_syn(line_number)
     -- Originally taken from leisiji's code:
     -- https://github.com/leisiji/indent-o-matic/blob/c440898e3e6bcc12c9c24d4867875712c4d1b5f7/lua/indent-o-matic.lua#L51-L57
@@ -82,46 +86,37 @@ local function is_multiline_syn(line_number)
     return syntax == "Comment" or syntax == "String"
 end
 
--- `is_multiline` variant based on Neovim's treesitter module
+-- Detect if the line is a comment or a string based on Neovim's tree-sitter module
 local function is_multiline_ts(line_number)
-    print("using treesitter")
-
-    -- Fallback, this should ideally never happen
-    if ts_utils == nil then
-        print("fallback to syntax")
-        return is_multiline_syn(line_number)
-    end
-
-    local parsers = require('nvim-treesitter.parsers')
     local root_lang_tree = parsers.get_parser()
     if not root_lang_tree then
-        print("no root_lang_tree")
         -- No syntax tree => no strings/comments
         return false
     end
 
     local root = ts_utils.get_root_for_position(line_number, 0, root_lang_tree)
     if not root then
-        print("no root")
         -- No syntax tree on this line
         return false
     end
 
+    -- Get the node's type for the first character of the line
     local node = root:named_descendant_for_range(0, line_number, 0, line_number)
     local node_type = node:type()
 
-    print(node_type)
     return node_type == 'comment' or node_type == 'string'
 end
 
--- Detect if the line is a comment or a string
-local function is_multiline(line_number)
+-- Get the correct `is_multiline` function based on the current buffer's configuration
+local function get_is_multiline_function()
     local buf = vim.api.nvim_get_current_buf()
 
-    if highlighter.active[buf] then
-        return is_multiline_ts(line_number)
+    if ts_enabled and highlighter.active[buf] then
+        -- Buffer is highlighted through tree-sitter
+        return is_multiline_ts
     else
-        return is_multiline_syn(line_number)
+        -- Default fallback
+        return is_multiline_syn
     end
 end
 
@@ -145,6 +140,12 @@ function indent_o_matic.detect()
     local max_lines = config('max_lines', 2048)
     local standard_widths = config('standard_widths', { 2, 4, 8 })
     local skip_multiline = config('skip_multiline', true)
+
+    -- Detect which method to use to detect multiline strings and comments
+    local is_multiline
+    if skip_multiline then
+        is_multiline = get_is_multiline_function()
+    end
 
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
