@@ -141,6 +141,15 @@ function indent_o_matic.detect()
     local standard_widths = config('standard_widths', { 2, 4, 8 })
     local skip_multiline = config('skip_multiline', true)
 
+    -- Figure out the maximum space indentation possible
+    table.sort(standard_widths)
+    local max_indentation
+    if #standard_widths == 0 then
+        max_indentation = 0
+    else
+        max_indentation = standard_widths[#standard_widths]
+    end
+
     -- Detect which method to use to detect multiline strings and comments
     local is_multiline
     if skip_multiline then
@@ -178,7 +187,7 @@ function indent_o_matic.detect()
         elseif first_char == ' ' then
             -- Figure out the number of spaces used and if it should be the indentation
             local j = 2
-            while j ~= #line and j < 10 do
+            while j ~= #line and j < max_indentation + 2 do
                 local c = line:sub(j, j)
                 if c == '\t' then
                     -- Spaces and then a tab? WTF? Ignore this unholy line
