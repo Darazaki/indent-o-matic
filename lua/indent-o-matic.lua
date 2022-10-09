@@ -1,6 +1,18 @@
 local indent_o_matic = {}
 local preferences = {}
 
+-- Treesitter includes
+local parsers
+local highlighter = require 'vim.treesitter.highlighter'
+local has_ts_utils, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
+if has_ts_utils then
+    parsers = require 'nvim-treesitter.parsers'
+else
+    ts_utils = nil
+end
+
+has_ts_utils = nil
+
 -- Get value of option
 local function opt(name)
     return vim.api.nvim_buf_get_option(0, name)
@@ -62,12 +74,55 @@ local function get_default_indent()
     end
 end
 
--- Detect if the line is a comment or a string
-local function is_multiline(line_number)
+-- `is_multiline` variant based on Vim's syntax module
+local function is_multiline_syn(line_number)
     -- Originally taken from leisiji's code:
     -- https://github.com/leisiji/indent-o-matic/blob/c440898e3e6bcc12c9c24d4867875712c4d1b5f7/lua/indent-o-matic.lua#L51-L57
     local syntax = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.synID(line_number, 1, 1)), 'name')
     return syntax == "Comment" or syntax == "String"
+end
+
+-- `is_multiline` variant based on Neovim's treesitter module
+local function is_multiline_ts(line_number)
+    print("using treesitter")
+
+    -- Fallback, this should ideally never happen
+    if ts_utils == nil then
+        print("fallback to syntax")
+        return is_multiline_syn(line_number)
+    end
+
+    local parsers = require('nvim-treesitter.parsers')
+    local root_lang_tree = parsers.get_parser()
+    if not root_lang_tree then
+        print("no root_lang_tree")
+        -- No syntax tree => no strings/comments
+        return false
+    end
+
+    local root = ts_utils.get_root_for_position(line_number, 0, root_lang_tree)
+    if not root then
+        print("no root")
+        -- No syntax tree on this line
+        return false
+    end
+
+    local node = root:named_descendant_for_range(0, line_number, 0, line_number)
+    local node_type = node:type()
+
+    print(node_type)
+    return node_type == 'comment' or node_type == 'string'
+end
+
+-- Detect if the line is a comment or a string
+local function is_multiline(line_number)
+    local buf = vim.api.nvim_get_current_buf()
+
+    if highlighter.active[buf] then
+        return is_multiline_ts(line_number)
+    else
+        return is_multiline_syn(line_number)
+    end
 end
 
 -- Configure the plugin
