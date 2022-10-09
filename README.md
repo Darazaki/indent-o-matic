@@ -13,7 +13,7 @@ that most people will understand what it will do predictably
 
 ## Requirements
 
-- Neovim >= 4.4
+- Neovim >= 0.4.4
 
 ## Installation
 
