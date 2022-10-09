@@ -1,4 +1,4 @@
-local indent_o_matic = {}
+local M = {}
 local preferences = {}
 
 -- Optionally require a module returning `nil` if it can't be found
@@ -121,7 +121,7 @@ local function get_is_multiline_function()
 end
 
 -- Configure the plugin
-function indent_o_matic.setup(options)
+function M.setup(options)
     if type(options) == 'table' then
         preferences = options
     else
@@ -132,7 +132,7 @@ function indent_o_matic.setup(options)
 end
 
 -- Attempt to detect current buffer's indentation and apply it to local settings
-function indent_o_matic.detect()
+function M.detect()
     local default = get_default_indent()
     local detected = default
 
@@ -229,4 +229,4 @@ function indent_o_matic.detect()
     end
 end
 
-return indent_o_matic
+return M
