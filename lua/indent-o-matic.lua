@@ -12,10 +12,10 @@ local function optional_require(module)
 end
 
 -- Tree-sitter includes
-local parsers = optional_require 'nvim-treesitter.parsers'
-local highlighter = optional_require 'vim.treesitter.highlighter'
+local ts_parsers = optional_require 'nvim-treesitter.parsers'
+local ts_highlighter = optional_require 'vim.treesitter.highlighter'
 local ts_utils = optional_require 'nvim-treesitter.ts_utils'
-local ts_enabled = parsers ~= nil and highlighter ~= nil and ts_utils ~= nil
+local ts_enabled = ts_parsers ~= nil and ts_highlighter ~= nil and ts_utils ~= nil
 
 -- Get value of option
 local function opt(name)
@@ -68,11 +68,11 @@ end
 local function get_default_indent()
     if opt('expandtab') then
         -- If shiftwidth is 0, use tabstop (see: `:help shiftwidth`)
-        local ident = opt('shiftwidth')
-        if ident == 0 then
-            ident = opt('tabstop')
+        local indent = opt('shiftwidth')
+        if indent == 0 then
+            indent = opt('tabstop')
         end
-        return ident
+        return indent
     else
         return 0
     end
@@ -88,7 +88,7 @@ end
 
 -- Detect if the line is a comment or a string based on Neovim's tree-sitter module
 local function is_multiline_ts(line_number)
-    local root_lang_tree = parsers.get_parser()
+    local root_lang_tree = ts_parsers.get_parser()
     if not root_lang_tree then
         -- No syntax tree => no strings/comments
         return false
@@ -111,7 +111,7 @@ end
 local function get_is_multiline_function()
     local buf = vim.api.nvim_get_current_buf()
 
-    if ts_enabled and highlighter.active[buf] then
+    if ts_enabled and ts_highlighter.active[buf] then
         -- Buffer is highlighted through tree-sitter
         return is_multiline_ts
     else
