@@ -19,6 +19,16 @@ that most people will understand what it will do predictably
 
 Can be installed through any standard Vim package manager, configuration is optional
 
+E.g. through [vim-plug](https://github.com/junegunn/vim-plug):
+
+```vim
+call plug#begin()
+    Plug 'Darazaki/indent-o-matic'
+call plug#end()
+```
+
+Then restart Neovim and run `:PlugInstall`
+
 ## Configuration
 
 Configuration is done in Lua:
@@ -78,6 +88,9 @@ from the global settings
 
 `:IndentOMatic` is also made available to detect the current buffer's indentation
 on demand
+
+If you want this plugin to only be invoked manually through `:IndentOMatic`,
+you can add `autocmd! indent_o_matic` to your init file
 
 ## Alternatives
 
