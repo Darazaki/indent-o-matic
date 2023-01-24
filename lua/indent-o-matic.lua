@@ -101,7 +101,7 @@ local function is_multiline_ts(line_number)
     end
 
     -- Get the node's type for the first character of the line
-    local node = root:named_descendant_for_range(0, line_number, 0, line_number)
+    local node = root:named_descendant_for_range(line_number, 0, line_number, 0)
     local node_type = node:type()
 
     return node_type == 'comment' or node_type == 'string'
