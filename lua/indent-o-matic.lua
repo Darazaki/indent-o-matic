@@ -163,7 +163,7 @@ function M.detect()
         local first_char
 
         local ok, line = pcall(function() return line_at(i) end)
-        if not ok then
+        if not ok or line == nil then
             -- End of file
             break
         end
