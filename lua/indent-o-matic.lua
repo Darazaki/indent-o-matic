@@ -169,7 +169,7 @@ function M.detect()
         end
 
         -- Skip empty lines
-        if #line == 0 then
+        if not line or #line == 0 then
             goto continue
         end
 
