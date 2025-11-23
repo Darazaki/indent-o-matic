@@ -106,7 +106,6 @@ as a beginner so, if you've an idea, feel free to write a PR to improve this pro
 
 The only rules to follow are:
 
-- PRs should go to the `testing` branch (for, well, testing if everything still works)
 - The detection algorithm should stay dumb
 - The plugin itself should work with Lua & Vim code only
 - No configuration required
