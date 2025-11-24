@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-slim
+
+    steps:
+    - uses: actions/checkout@v6
+    - name: Install dependencies
+      run: sudo apt-get install luajit
+    - name: Test
+      run: cd test && luajit run-all.lua

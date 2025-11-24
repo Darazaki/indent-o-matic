@@ -1,0 +1,3 @@
+this file has
+    	<- 4 spaces and then a tab (ignored)
+		<- just tabs
