@@ -17,14 +17,26 @@ local ts_highlighter = optional_require 'vim.treesitter.highlighter'
 local ts_utils = optional_require 'nvim-treesitter.ts_utils'
 local ts_enabled = ts_parsers ~= nil and ts_highlighter ~= nil and ts_utils ~= nil
 
--- Get value of option
-local function opt(name)
-    return vim.api.nvim_buf_get_option(0, name)
-end
+-- Support for Neovim < 0.7
+-- * `opt(name)`: Get value of option
+-- * `setopt(name, value)`: Set value of option
+local opt, setopt
+if vim.api.nvim_get_option_value == nil then
+    opt = function(name)
+        return vim.api.nvim_buf_get_option(0, name)
+    end
 
--- Set value of option
-local function setopt(name, value)
-    return vim.api.nvim_buf_set_option(0, name, value)
+    setopt = function(name, value)
+        vim.api.nvim_buf_set_option(0, name, value)
+    end
+else
+    opt = function(name)
+        return vim.api.nvim_get_option_value(name, { buf = 0 })
+    end
+
+    setopt = function(name, value)
+        vim.api.nvim_set_option_value(name, value, { buf = 0 })
+    end
 end
 
 -- Get a line's contents as a string (0-indexed)
@@ -156,6 +168,9 @@ function M.detect()
         is_multiline = get_is_multiline_function()
     end
 
+    local k_char_space = 32 -- => ' '
+    local k_char_tab = 9 -- => '\t'
+
     -- Loop over every line, breaking once it finds something that looks like a
     -- standard indentation or if it reaches end of file
     local i = 0
@@ -175,8 +190,8 @@ function M.detect()
 
         -- If a line starts with a tab then the file must be tab indented
         -- else if it starts with spaces it tries to detect if it's the file's indentation
-        first_char = line:sub(1, 1)
-        if first_char == '\t' then
+        first_char = string.byte(line)
+        if first_char == k_char_tab then
             -- Skip multi-line comments and strings (1-indexed)
             if skip_multiline and is_multiline(i + 1) then
                 goto continue
@@ -184,15 +199,15 @@ function M.detect()
 
             detected = 0
             break
-        elseif first_char == ' ' then
+        elseif first_char == k_char_space then
             -- Figure out the number of spaces used and if it should be the indentation
             local j = 2
             while j ~= #line and j < max_indentation + 2 do
-                local c = line:sub(j, j)
-                if c == '\t' then
+                local c = string.byte(line, j)
+                if c == k_char_tab then
                     -- Spaces and then a tab? WTF? Ignore this unholy line
                     goto continue
-                elseif c ~= ' ' then
+                elseif c ~= k_char_space then
                     break
                 end
 
