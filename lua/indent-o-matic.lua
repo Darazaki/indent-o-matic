@@ -1,21 +1,9 @@
 local M = {}
 local preferences = {}
 
--- Optionally require a module returning `nil` if it can't be found
-local function optional_require(module)
-    local has_module, module = pcall(require, module)
-    if not has_module then
-        module = nil
-    end
-
-    return module
-end
-
--- Tree-sitter includes
-local ts_parsers = optional_require 'nvim-treesitter.parsers'
-local ts_highlighter = optional_require 'vim.treesitter.highlighter'
-local ts_utils = optional_require 'nvim-treesitter.ts_utils'
-local ts_enabled = ts_parsers ~= nil and ts_highlighter ~= nil and ts_utils ~= nil
+local nvim_has_treesitter = (
+    vim.treesitter and vim.treesitter.get_parser and vim.treesitter.get_node
+) and true or false
 
 -- Support for Neovim < 0.7
 -- * `opt(name)`: Get value of option
@@ -99,37 +87,39 @@ local function is_multiline_syn(line_number)
 end
 
 -- Detect if the line is a comment or a string based on Neovim's tree-sitter module
-local function is_multiline_ts(line_number)
-    local root_lang_tree = ts_parsers.get_parser()
-    if not root_lang_tree then
-        -- No syntax tree => no strings/comments
-        return false
+local function is_multiline_ts_builder(parser)
+    return function (line_number)
+        -- Translate 1-indexed line number to 0-indexed one
+        line_number = line_number - 1
+
+        -- Make sure the range is parsed
+        parser:parse { line_number, 0, line_number, 0 }
+
+        local node = vim.treesitter.get_node { pos = { line_number, 0 } }
+        if not node then
+            -- No nodes here
+            return false
+        end
+
+        local node_type = node:type()
+        return node_type == 'comment' or node_type == 'string'
     end
-
-    local root = ts_utils.get_root_for_position(line_number, 0, root_lang_tree)
-    if not root then
-        -- No syntax tree on this line
-        return false
-    end
-
-    -- Get the node's type for the first character of the line
-    local node = root:named_descendant_for_range(line_number, 0, line_number, 0)
-    local node_type = node:type()
-
-    return node_type == 'comment' or node_type == 'string'
 end
 
 -- Get the correct `is_multiline` function based on the current buffer's configuration
 local function get_is_multiline_function()
-    local buf = vim.api.nvim_get_current_buf()
+    -- Fallback
+    local result = is_multiline_syn
 
-    if ts_enabled and ts_highlighter.active[buf] then
-        -- Buffer is highlighted through tree-sitter
-        return is_multiline_ts
-    else
-        -- Default fallback
-        return is_multiline_syn
+    if nvim_has_treesitter then
+        local maybe_parser = vim.treesitter.get_parser()
+        if maybe_parser then
+            -- Buffer is highlighted through tree-sitter
+            result = is_multiline_ts_builder(maybe_parser)
+        end
     end
+
+    return result
 end
 
 -- Configure the plugin
