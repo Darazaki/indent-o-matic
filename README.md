@@ -17,17 +17,17 @@ that most people will understand what it will do predictably
 
 ## Installation
 
-Can be installed through any standard Vim package manager, configuration is optional
+Can be installed through any standard Neovim package manager, configuration is optional
 
-E.g. through [vim-plug](https://github.com/junegunn/vim-plug):
+E.g. through [`vim.pack`](https://neovim.io/doc/user/pack/#vim.pack) in Lua:
 
-```vim
-call plug#begin()
-    Plug 'Darazaki/indent-o-matic'
-call plug#end()
+```lua
+vim.pack.add {
+    'https://github.com/Darazaki/indent-o-matic',
+}
 ```
 
-Then restart Neovim and run `:PlugInstall`
+Then restart Neovim to finish the installation
 
 ## Configuration
 
