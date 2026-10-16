@@ -112,8 +112,9 @@ local function get_is_multiline_function()
     local result = is_multiline_syn
 
     if nvim_has_treesitter then
-        local maybe_parser = vim.treesitter.get_parser()
-        if maybe_parser then
+        -- Before Neovim 0.12, get_parser throws when no parser is available.
+        local ok, maybe_parser = pcall(vim.treesitter.get_parser)
+        if ok and maybe_parser then
             -- Buffer is highlighted through tree-sitter
             result = is_multiline_ts_builder(maybe_parser)
         end
