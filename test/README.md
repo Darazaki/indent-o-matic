@@ -1,5 +1,13 @@
 # Tests
 
+Run the emulator tests with `luajit run-all.lua` from this directory.
+
+From the repository root, run the no-parser regression test with Neovim >= 0.9:
+
+```sh
+nvim --headless -u NONE -i NONE -n -l test/no-parser.lua
+```
+
 Test files are located inside the `data` directory
 
 Name of test files: `$some_name.$expected_indentation_result.$filetype`:
